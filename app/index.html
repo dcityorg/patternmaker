@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Maker — Seamless Tile Patterns</title>
+    <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <!-- Header -->
+            <div class="sidebar-header">
+                <div class="header-title-row">
+                    <h1>Pattern Maker</h1>
+                    <div class="header-buttons">
+                        <button id="undo-btn" class="header-icon-btn" disabled title="Undo (⌘Z)">&#8630;</button>
+                        <button id="redo-btn" class="header-icon-btn" disabled title="Redo (⌘⇧Z)">&#8631;</button>
+                        <button id="toggle-sections-btn" class="header-icon-btn" title="Expand/collapse all sections">&#8597;</button>
+                        <button id="help-btn" class="header-icon-btn help-toggle" title="Toggle help panel">?</button>
+                    </div>
+                </div>
+                <div class="byline">Seamless Tile Patterns — v1.0.0</div>
+                <div class="filename-row">
+                    <span class="unsaved-dot" id="unsaved-dot"></span>
+                    <input type="text" id="filename-input" class="filename-input" value="my-pattern" spellcheck="false">
+                </div>
+                <div class="toolbar-row" style="margin-top: 8px">
+                    <button id="load-design">Load Design</button>
+                    <button id="save-design">Save Design</button>
+                    <button id="export-svg" class="btn-export">Export SVG</button>
+                </div>
+            </div>
+
+            <!-- Scrollable controls -->
+            <div class="sidebar-scroll">
+
+                <!-- PATTERN -->
+                <details class="section" open>
+                    <summary>Pattern</summary>
+                    <div class="section-content">
+
+                <select id="pattern-type" class="control-select">
+                    <option value="circles">Circle Packing</option>
+                    <option value="cityscape">Cityscape</option>
+                    <option value="carpet">Fractal Carpet</option>
+                    <option value="hilbert">Fractal Hilbert</option>
+                    <option value="peano">Fractal Peano</option>
+                    <option value="masonry">Masonry</option>
+                    <option value="rd">Reaction-Diffusion</option>
+                    <option value="noise">Rorschach</option>
+                    <option value="shapegrid">Shapes Aligned</option>
+                    <option value="vshapes">Shapes Scattered</option>
+                    <option value="truchet">Truchet</option>
+                    <option value="voronoi" selected>Voronoi</option>
+                </select>
+
+                <!-- Voronoi -->
+                <div id="voronoi-controls" class="pattern-controls">
+                    <div class="slider-row">
+                        <label>Cell Count</label>
+                        <input type="range" id="cellcount" min="3" max="200" value="30">
+                        <span class="value" id="cellcount-value">30</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Cell Shape</label>
+                        <input type="range" id="roundness" min="1" max="100" value="50">
+                        <span class="value" id="roundness-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Cell Uniformity</label>
+                        <input type="range" id="uniformity" min="0" max="100" value="0">
+                        <span class="value" id="uniformity-value">0</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Cell Spacing</label>
+                        <input type="range" id="spacing" min="4" max="200" value="20">
+                        <span class="value" id="spacing-value">5.0</span>
+                    </div>
+                </div>
+
+                <!-- Truchet -->
+                <div id="truchet-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Grid Size</label>
+                        <input type="range" id="truchet-grid" min="2" max="32" value="8">
+                        <span class="value" id="truchet-grid-value">8</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Balance</label>
+                        <input type="range" id="truchet-balance" min="0" max="100" value="50">
+                        <span class="value" id="truchet-balance-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Arc Shape</label>
+                        <input type="range" id="truchet-roundness" min="0" max="100" value="100">
+                        <span class="value" id="truchet-roundness-value">100</span>
+                    </div>
+                </div>
+
+                <!-- Masonry -->
+                <div id="masonry-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Grid Size</label>
+                        <input type="range" id="masonry-grid" min="4" max="20" value="8">
+                        <span class="value" id="masonry-grid-value">8</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Size Variation</label>
+                        <input type="range" id="masonry-sizevar" min="0" max="100" value="60">
+                        <span class="value" id="masonry-sizevar-value">60</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Subdivision</label>
+                        <input type="range" id="masonry-subdiv" min="0" max="100" value="40">
+                        <span class="value" id="masonry-subdiv-value">40</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Spacing</label>
+                        <input type="range" id="masonry-spacing" min="2" max="30" value="5">
+                        <span class="value" id="masonry-spacing-value">5</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Corner Radius</label>
+                        <input type="range" id="masonry-radius" min="0" max="100" value="20">
+                        <span class="value" id="masonry-radius-value">20</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Irregularity</label>
+                        <input type="range" id="masonry-irregularity" min="0" max="100" value="40">
+                        <span class="value" id="masonry-irregularity-value">40</span>
+                    </div>
+                </div>
+
+                <!-- Cityscape -->
+                <div id="cityscape-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Cell Count</label>
+                        <input type="range" id="cityscape-cells" min="10" max="100" value="30">
+                        <span class="value" id="cityscape-cells-value">30</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Uniformity</label>
+                        <input type="range" id="cityscape-uniformity" min="0" max="100" value="0">
+                        <span class="value" id="cityscape-uniformity-value">0</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Size Variation</label>
+                        <input type="range" id="cityscape-sizevar" min="0" max="100" value="60">
+                        <span class="value" id="cityscape-sizevar-value">60</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Subdivision</label>
+                        <input type="range" id="cityscape-subdiv" min="0" max="100" value="40">
+                        <span class="value" id="cityscape-subdiv-value">40</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Spacing</label>
+                        <input type="range" id="cityscape-spacing" min="2" max="30" value="5">
+                        <span class="value" id="cityscape-spacing-value">5</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Corner Radius</label>
+                        <input type="range" id="cityscape-radius" min="0" max="100" value="20">
+                        <span class="value" id="cityscape-radius-value">20</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Shape Irregularity</label>
+                        <input type="range" id="cityscape-irregularity" min="0" max="100" value="40">
+                        <span class="value" id="cityscape-irregularity-value">40</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Min Size</label>
+                        <input type="range" id="cityscape-minsize" min="1" max="20" value="3">
+                        <span class="value" id="cityscape-minsize-value">3</span>
+                    </div>
+                </div>
+
+                <!-- Reaction-Diffusion -->
+                <div id="rd-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Scale</label>
+                        <input type="range" id="rd-scale" min="10" max="100" value="50">
+                        <span class="value" id="rd-scale-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Style</label>
+                        <input type="range" id="rd-style" min="0" max="100" value="30">
+                        <span class="value" id="rd-style-value">30</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Detail</label>
+                        <input type="range" id="rd-detail" min="1" max="5" value="3">
+                        <span class="value" id="rd-detail-value">3</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Threshold</label>
+                        <input type="range" id="rd-threshold" min="20" max="80" value="50">
+                        <span class="value" id="rd-threshold-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Smoothness</label>
+                        <input type="range" id="rd-smoothness" min="0" max="100" value="70">
+                        <span class="value" id="rd-smoothness-value">70</span>
+                    </div>
+                </div>
+
+                <!-- Circle Packing -->
+                <div id="circles-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Scale</label>
+                        <input type="range" id="circles-scale" min="10" max="100" value="50">
+                        <span class="value" id="circles-scale-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Size Range</label>
+                        <input type="range" id="circles-sizerange" min="0" max="100" value="70">
+                        <span class="value" id="circles-sizerange-value">70</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Density</label>
+                        <input type="range" id="circles-density" min="0" max="100" value="50">
+                        <span class="value" id="circles-density-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Size Bias</label>
+                        <input type="range" id="circles-sizebias" min="0" max="100" value="50">
+                        <span class="value" id="circles-sizebias-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Spacing</label>
+                        <input type="range" id="circles-spacing" min="2" max="30" value="5">
+                        <span class="value" id="circles-spacing-value">5</span>
+                    </div>
+                </div>
+
+                <!-- Fractal Carpet -->
+                <div id="carpet-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Depth</label>
+                        <input type="range" id="carpet-depth" min="1" max="5" value="3">
+                        <span class="value" id="carpet-depth-value">3</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Spacing</label>
+                        <input type="range" id="carpet-spacing" min="0" max="30" value="2">
+                        <span class="value" id="carpet-spacing-value">2</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Corner Radius</label>
+                        <input type="range" id="carpet-radius" min="0" max="100" value="0">
+                        <span class="value" id="carpet-radius-value">0</span>
+                    </div>
+                    <div class="toggle-row">
+                        <label for="carpet-invert">Invert</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="carpet-invert">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Fractal Hilbert -->
+                <div id="hilbert-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Depth</label>
+                        <input type="range" id="hilbert-depth" min="1" max="6" value="3">
+                        <span class="value" id="hilbert-depth-value">3</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Balance</label>
+                        <input type="range" id="hilbert-balance" min="0" max="100" value="50">
+                        <span class="value" id="hilbert-balance-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Corner Radius</label>
+                        <input type="range" id="hilbert-radius" min="0" max="100" value="50">
+                        <span class="value" id="hilbert-radius-value">50</span>
+                    </div>
+                </div>
+
+                <!-- Fractal Peano -->
+                <div id="peano-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Depth</label>
+                        <input type="range" id="peano-depth" min="1" max="4" value="2">
+                        <span class="value" id="peano-depth-value">2</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Balance</label>
+                        <input type="range" id="peano-balance" min="0" max="100" value="50">
+                        <span class="value" id="peano-balance-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Corner Radius</label>
+                        <input type="range" id="peano-radius" min="0" max="100" value="50">
+                        <span class="value" id="peano-radius-value">50</span>
+                    </div>
+                </div>
+
+                <!-- Rorschach -->
+                <div id="noise-controls" class="pattern-controls" style="display:none">
+                    <div class="slider-row">
+                        <label>Scale</label>
+                        <input type="range" id="noise-scale" min="10" max="100" value="50">
+                        <span class="value" id="noise-scale-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Warp</label>
+                        <input type="range" id="noise-warp" min="0" max="100" value="50">
+                        <span class="value" id="noise-warp-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Detail</label>
+                        <input type="range" id="noise-detail" min="1" max="6" value="3">
+                        <span class="value" id="noise-detail-value">3</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Threshold</label>
+                        <input type="range" id="noise-threshold" min="10" max="90" value="50">
+                        <span class="value" id="noise-threshold-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Smoothness</label>
+                        <input type="range" id="noise-smoothness" min="0" max="100" value="70">
+                        <span class="value" id="noise-smoothness-value">70</span>
+                    </div>
+                </div>
+
+                <!-- Shapes Scattered -->
+                <div id="vshapes-controls" class="pattern-controls" style="display:none">
+                    <div class="select-row">
+                        <label>Shape</label>
+                        <select id="vshapes-shape">
+                            <option value="circle">Circle</option>
+                            <option value="cross">Cross</option>
+                            <option value="diamond">Diamond</option>
+                            <option value="hexagon">Hexagon</option>
+                            <option value="octagon">Octagon</option>
+                            <option value="pentagon">Pentagon</option>
+                            <option value="roundedSquare">Rounded Square</option>
+                            <option value="square">Square</option>
+                            <option value="star" selected>Star</option>
+                            <option value="triangle">Triangle</option>
+                        </select>
+                    </div>
+                    <div class="slider-row">
+                        <label>Cell Count</label>
+                        <input type="range" id="vshapes-cells" min="5" max="200" value="30">
+                        <span class="value" id="vshapes-cells-value">30</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Uniformity</label>
+                        <input type="range" id="vshapes-uniformity" min="0" max="100" value="0">
+                        <span class="value" id="vshapes-uniformity-value">0</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Shape Scale</label>
+                        <input type="range" id="vshapes-scale" min="10" max="100" value="70">
+                        <span class="value" id="vshapes-scale-value">70</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Spacing</label>
+                        <input type="range" id="vshapes-spacing" min="0" max="30" value="5">
+                        <span class="value" id="vshapes-spacing-value">5</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Corner Radius</label>
+                        <input type="range" id="vshapes-radius" min="0" max="100" value="20">
+                        <span class="value" id="vshapes-radius-value">20</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Rotation</label>
+                        <input type="range" id="vshapes-rotation" min="0" max="100" value="0">
+                        <span class="value" id="vshapes-rotation-value">0</span>
+                    </div>
+                </div>
+
+                <!-- Shapes Aligned -->
+                <div id="shapegrid-controls" class="pattern-controls" style="display:none">
+                    <div class="select-row">
+                        <label>Shape</label>
+                        <select id="sgrid-shape">
+                            <option value="circle">Circle</option>
+                            <option value="cross">Cross</option>
+                            <option value="diamond">Diamond</option>
+                            <option value="hexagon" selected>Hexagon</option>
+                            <option value="octagon">Octagon</option>
+                            <option value="pentagon">Pentagon</option>
+                            <option value="roundedSquare">Rounded Square</option>
+                            <option value="square">Square</option>
+                            <option value="star">Star</option>
+                            <option value="triangle">Triangle</option>
+                        </select>
+                    </div>
+                    <div class="slider-row">
+                        <label>Grid Size</label>
+                        <input type="range" id="sgrid-cols" min="3" max="20" value="8">
+                        <span class="value" id="sgrid-cols-value">8</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Row Offset</label>
+                        <input type="range" id="sgrid-offset" min="0" max="50" value="50">
+                        <span class="value" id="sgrid-offset-value">50</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Spacing</label>
+                        <input type="range" id="sgrid-spacing" min="0" max="30" value="5">
+                        <span class="value" id="sgrid-spacing-value">5</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Corner Radius</label>
+                        <input type="range" id="sgrid-radius" min="0" max="100" value="20">
+                        <span class="value" id="sgrid-radius-value">20</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Rotation</label>
+                        <input type="range" id="sgrid-rotation" min="0" max="180" value="0">
+                        <span class="value" id="sgrid-rotation-value">0</span>
+                    </div>
+                </div>
+
+                    </div>
+                </details>
+
+                <details class="section" open>
+                    <summary>Colors</summary>
+                    <div class="section-content">
+                        <div class="color-row">
+                            <span class="color-label">Cell</span>
+                            <input type="color" id="cell-color" value="#000000">
+                            <button id="swap-colors" class="btn-swap" title="Swap colors">&#8660;</button>
+                            <input type="color" id="gap-color" value="#ffffff">
+                            <span class="color-label">Gap</span>
+                        </div>
+                        <div class="color-hex-row">
+                            <input type="text" id="cell-hex" class="hex-input" value="#000000" spellcheck="false">
+                            <input type="text" id="gap-hex" class="hex-input" value="#ffffff" spellcheck="false">
+                        </div>
+                    </div>
+                </details>
+
+                <details class="section" open>
+                    <summary>Seed</summary>
+                    <div class="section-content">
+                        <div class="seed-row">
+                            <label>Seed</label>
+                            <input type="text" id="seed-input" class="seed-input" value="">
+                            <button id="new-pattern" class="btn-small">New Pattern</button>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="section" open>
+                    <summary>Dimensions</summary>
+                    <div class="section-content">
+                        <div class="slider-row">
+                            <label>Width</label>
+                            <input type="range" id="width" min="10" max="1200" value="400">
+                            <span class="value" id="width-value">400</span>
+                        </div>
+                        <div class="slider-row">
+                            <label>Height</label>
+                            <input type="range" id="height" min="10" max="1200" value="400">
+                            <span class="value" id="height-value">400</span>
+                        </div>
+                        <div class="transform-row">
+                            <button id="rotate-btn" class="btn-rotate" title="Rotate 90deg">&#8635; Rotate</button>
+                            <button id="flip-h-btn" class="btn-rotate" title="Flip horizontal">&#8596; Flip H</button>
+                            <button id="flip-v-btn" class="btn-rotate" title="Flip vertical">&#8597; Flip V</button>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="section" open>
+                    <summary>View</summary>
+                    <div class="section-content">
+                        <div class="slider-row">
+                            <label>Zoom</label>
+                            <input type="range" id="zoom" min="25" max="800" value="100">
+                            <span class="value" id="zoom-value">100</span>
+                        </div>
+                        <div class="toggle-row">
+                            <label for="show-tiling">Tiling Preview (3x3)</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="show-tiling">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                    </div>
+                </details>
+
+            </div>
+        </aside>
+
+        <main class="canvas-area">
+            <div class="svg-wrapper" id="svg-wrapper">
+                <svg id="voronoi-svg" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <g id="tile-cells"></g>
+                    </defs>
+                </svg>
+            </div>
+        </main>
+
+        <!-- Help Panel -->
+        <aside class="help-panel" id="help-panel" style="display:none">
+            <div class="help-resize-handle" id="help-resize-handle" title="Drag to resize"></div>
+            <div class="help-header">
+                <h2>Help</h2>
+                <button id="help-close-btn" class="help-close-btn" title="Close help">&times;</button>
+            </div>
+            <div class="help-scroll sidebar-scroll" id="help-scroll"></div>
+        </aside>
+    </div>
+
+    <input type="file" id="file-loader" accept=".json" style="display:none">
+    <script type="module" src="app.js?v=2"></script>
+</body>
+</html>
