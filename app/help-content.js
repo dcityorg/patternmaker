@@ -42,7 +42,7 @@ export const HELP_SECTIONS = [
                 { key: 'Masonry', value: 'Irregular rounded rectangles in a brick-like grid. Subdivision splits cells; Size Variation adds randomness.' },
                 { key: 'Cityscape', value: 'Irregular quadrilaterals placed in Voronoi-distributed territories. Shape Irregularity warps rectangles into trapezoids.' },
                 { key: 'Rorschach', value: 'Organic inkblot shapes from domain-warped Perlin noise. Warp creates flowing, swirling forms.' },
-                { key: 'Reaction-Diffusion', value: 'Simulation-based patterns (Gray-Scott model). Style sweeps from labyrinths through worms to spots. May take 1-3 seconds to generate.' },
+                { key: 'Reaction-Diffusion', value: 'Simulation-based patterns (Gray-Scott model). Style sweeps from labyrinths through worms to spots. May take 1-3 seconds to generate. Note: tiling may not be seamless with all combinations of settings and dimensions — if you see edge mismatches, try adjusting Scale or using square dimensions.' },
                 { key: 'Circle Packing', value: 'Multi-scale circles packed tightly. Size Bias and Size Range control the mix of large and small circles.' },
                 { key: 'Fractal Carpet', value: 'Sierpinski carpet — recursive square subdivisions with center cutouts. Invert mode fills the holes instead.' },
                 { key: 'Fractal Hilbert', value: 'Hilbert space-filling curve rendered as a filled band. Corner Radius rounds the turns.' },

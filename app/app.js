@@ -104,6 +104,24 @@ function clearHistory() {
     updateUndoRedoButtons();
 }
 
+// Default values per pattern for Reset button
+const patternDefaults = {
+    voronoi: { seedCount: 30, roundness: 0.5, uniformity: 0, spacing: 5 },
+    truchet: { truchetGrid: 8, truchetBalance: 50, truchetRoundness: 100 },
+    masonry: { masonryGrid: 8, masonrySizeVar: 60, masonrySubdiv: 40, masonrySpacing: 5, masonryRadius: 20, masonryIrregularity: 40 },
+    cityscape: { cityscapeCells: 30, cityscapeUniformity: 0, cityscapeSizeVar: 60, cityscapeSubdiv: 40, cityscapeSpacing: 5, cityscapeRadius: 20, cityscapeIrregularity: 40, cityscapeMinSize: 3 },
+    rd: { rdScale: 50, rdStyle: 30, rdDetail: 3, rdThreshold: 50, rdSmoothness: 70 },
+    circles: { circlesScale: 50, circlesSizeRange: 70, circlesDensity: 50, circlesSpacing: 5, circlesSizeBias: 50 },
+    carpet: { carpetDepth: 3, carpetSpacing: 2, carpetRadius: 0, carpetInvert: false },
+    hilbert: { hilbertDepth: 3, hilbertBalance: 50, hilbertRadius: 50 },
+    peano: { peanoDepth: 2, peanoBalance: 50, peanoRadius: 50 },
+    noise: { noiseScale: 50, noiseWarp: 50, noiseDetail: 3, noiseThreshold: 50, noiseSmoothness: 70 },
+    vshapes: { vshapesCells: 30, vshapesUniformity: 0, vshapesScale: 70, vshapesSpacing: 5, vshapesRadius: 20, vshapesRotation: 0 },
+    shapegrid: { sgridCols: 8, sgridOffset: 50, sgridSpacing: 5, sgridRadius: 20, sgridRotation: 0 },
+    colors: { cellColor: "#000000", gapColor: "#ffffff" },
+    dimensions: { width: 400, height: 400, rotation: 0, flipH: false, flipV: false },
+};
+
 const config = {
     pattern: "voronoi",
     seedCount: 30,
@@ -230,7 +248,10 @@ function syncAllControls() {
     document.getElementById("pattern-type").value = config.pattern;
     document.getElementById("cellcount").value = config.seedCount;
     document.getElementById("cellcount-value").textContent = config.seedCount;
-    document.getElementById("seed-input").value = config.seed;
+    const seedEl = document.getElementById("seed-input");
+    seedEl.value = config.seed;
+    const seedLen = Math.min(7, Math.max(5, String(config.seed).length));
+    seedEl.style.width = (seedLen * 8 + 20) + "px";
     document.getElementById("roundness").value = Math.round(config.roundness * 100);
     document.getElementById("roundness-value").textContent = Math.round(config.roundness * 100);
     document.getElementById("uniformity").value = config.uniformity;
@@ -667,8 +688,31 @@ function setupControls() {
         markUnsaved();
     });
 
+    // Reset buttons
+    document.querySelectorAll(".reset-link").forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const patternId = link.dataset.pattern;
+            const defaults = patternDefaults[patternId];
+            if (defaults) {
+                Object.assign(config, defaults);
+                syncAllControls();
+                render();
+                markUnsaved();
+            }
+        });
+    });
+
+    // Auto-size seed input to fit its value (capped to keep New Pattern visible)
+    function autoSizeSeed() {
+        const len = Math.min(7, Math.max(5, seedInput.value.length));
+        seedInput.style.width = (len * 8 + 20) + "px";
+    }
+
     // Show initial seed value
     seedInput.value = config.seed;
+    autoSizeSeed();
+    seedInput.addEventListener("input", autoSizeSeed);
 
     cellcountInput.addEventListener("input", () => {
         config.seedCount = parseInt(cellcountInput.value);
@@ -696,6 +740,7 @@ function setupControls() {
     newPatternBtn.addEventListener("click", () => {
         config.seed = Math.floor(Math.random() * 100000);
         seedInput.value = config.seed;
+        autoSizeSeed();
         render();
         markUnsaved();
     });
