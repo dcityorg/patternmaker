@@ -20,7 +20,7 @@
                         <button id="help-btn" class="header-icon-btn help-toggle" title="Toggle help panel">?</button>
                     </div>
                 </div>
-                <div class="byline">Seamless Tile Patterns — v1.0.0</div>
+                <div class="byline">Seamless Tile Patterns — v1.0.1</div>
                 <div class="filename-row">
                     <span class="unsaved-dot" id="unsaved-dot"></span>
                     <input type="text" id="filename-input" class="filename-input" value="my-pattern" spellcheck="false">
@@ -46,6 +46,7 @@
                     <option value="carpet">Fractal Carpet</option>
                     <option value="hilbert">Fractal Hilbert</option>
                     <option value="peano">Fractal Peano</option>
+                    <option value="hexgrid">Hexagon Grid</option>
                     <option value="masonry">Masonry</option>
                     <option value="rd">Reaction-Diffusion</option>
                     <option value="noise">Rorschach</option>
@@ -90,8 +91,8 @@
                     </div>
                     <div class="slider-row">
                         <label>Balance</label>
-                        <input type="range" id="truchet-balance" min="0" max="100" value="50">
-                        <span class="value" id="truchet-balance-value">50</span>
+                        <input type="range" id="truchet-balance" min="0" max="100" value="20">
+                        <span class="value" id="truchet-balance-value">20</span>
                     </div>
                     <div class="slider-row">
                         <label>Arc Shape</label>
@@ -308,13 +309,48 @@
                     </div>
                 </div>
 
+                <!-- Hexagon Grid -->
+                <div id="hexgrid-controls" class="pattern-controls" style="display:none">
+                    <div class="select-row">
+                        <label>Style</label>
+                        <select id="hexgrid-style">
+                            <option value="starburst" selected>Starburst</option>
+                            <option value="asanoha">Asanoha</option>
+                            <option value="star">Star</option>
+                            <option value="nested">Nested</option>
+                            <option value="tri">Tri</option>
+                            <option value="diamondcross">Diamond Cross</option>
+                            <option value="flowerstar">Flower Star</option>
+                            <option value="trisub">Triangle Sub</option>
+                            <option value="latticestar">Lattice Star</option>
+                            <option value="gridlattice">Grid Lattice</option>
+                        </select>
+                    </div>
+                    <div class="reset-row"><a href="#" class="reset-link" data-pattern="hexgrid">Reset</a></div>
+                    <div class="slider-row">
+                        <label>Grid Size</label>
+                        <input type="range" id="hexgrid-grid" min="1" max="12" value="4">
+                        <span class="value" id="hexgrid-grid-value">4</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Line Width</label>
+                        <input type="range" id="hexgrid-linewidth" min="1" max="20" value="4">
+                        <span class="value" id="hexgrid-linewidth-value">4</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Spacing</label>
+                        <input type="range" id="hexgrid-spacing" min="1" max="50" value="12">
+                        <span class="value" id="hexgrid-spacing-value">12</span>
+                    </div>
+                </div>
+
                 <!-- Rorschach -->
                 <div id="noise-controls" class="pattern-controls" style="display:none">
                     <div class="reset-row"><a href="#" class="reset-link" data-pattern="noise">Reset</a></div>
                     <div class="slider-row">
                         <label>Scale</label>
-                        <input type="range" id="noise-scale" min="10" max="100" value="50">
-                        <span class="value" id="noise-scale-value">50</span>
+                        <input type="range" id="noise-scale" min="10" max="100" value="52">
+                        <span class="value" id="noise-scale-value">52</span>
                     </div>
                     <div class="slider-row">
                         <label>Warp</label>
@@ -530,6 +566,6 @@
     </div>
 
     <input type="file" id="file-loader" accept=".json" style="display:none">
-    <script type="module" src="app.js?v=4"></script>
+    <script type="module" src="app.js?v=16"></script>
 </body>
 </html>

@@ -10,10 +10,11 @@ import * as shapegrid from "./patterns/shapegrid.js";
 import * as carpet from "./patterns/carpet.js";
 import * as hilbert from "./patterns/hilbert.js";
 import * as peano from "./patterns/peano.js";
+import * as hexgrid from "./patterns/hexgrid.js?v=11";
 import { HELP_SECTIONS } from "./help-content.js";
 
 // --- Pattern registry ---
-const patterns = { voronoi, truchet, masonry, cityscape, noise, rd, circles, vshapes, shapegrid, carpet, hilbert, peano };
+const patterns = { voronoi, truchet, masonry, cityscape, noise, rd, circles, vshapes, shapegrid, carpet, hilbert, peano, hexgrid };
 let activePattern = voronoi;
 
 // --- State ---
@@ -107,7 +108,7 @@ function clearHistory() {
 // Default values per pattern for Reset button
 const patternDefaults = {
     voronoi: { seedCount: 30, roundness: 0.5, uniformity: 0, spacing: 5 },
-    truchet: { truchetGrid: 8, truchetBalance: 50, truchetRoundness: 100 },
+    truchet: { truchetGrid: 8, truchetBalance: 20, truchetRoundness: 100 },
     masonry: { masonryGrid: 8, masonrySizeVar: 60, masonrySubdiv: 40, masonrySpacing: 5, masonryRadius: 20, masonryIrregularity: 40 },
     cityscape: { cityscapeCells: 30, cityscapeUniformity: 0, cityscapeSizeVar: 60, cityscapeSubdiv: 40, cityscapeSpacing: 5, cityscapeRadius: 20, cityscapeIrregularity: 40, cityscapeMinSize: 3 },
     rd: { rdScale: 50, rdStyle: 30, rdDetail: 3, rdThreshold: 50, rdSmoothness: 70 },
@@ -115,9 +116,10 @@ const patternDefaults = {
     carpet: { carpetDepth: 3, carpetSpacing: 2, carpetRadius: 0, carpetInvert: false },
     hilbert: { hilbertDepth: 3, hilbertBalance: 50, hilbertRadius: 50 },
     peano: { peanoDepth: 2, peanoBalance: 50, peanoRadius: 50 },
-    noise: { noiseScale: 50, noiseWarp: 50, noiseDetail: 3, noiseThreshold: 50, noiseSmoothness: 70 },
+    noise: { noiseScale: 52, noiseWarp: 50, noiseDetail: 3, noiseThreshold: 50, noiseSmoothness: 70 },
     vshapes: { vshapesCells: 30, vshapesUniformity: 0, vshapesScale: 70, vshapesSpacing: 5, vshapesRadius: 20, vshapesRotation: 0 },
     shapegrid: { sgridCols: 8, sgridOffset: 50, sgridSpacing: 5, sgridRadius: 20, sgridRotation: 0 },
+    hexgrid: { hexgridGrid: 4, hexgridLineWidth: 4, hexgridSpacing: 12, hexgridStyle: "starburst" },
     colors: { cellColor: "#000000", gapColor: "#ffffff" },
     dimensions: { width: 400, height: 400, rotation: 0, flipH: false, flipV: false },
 };
@@ -139,7 +141,7 @@ const config = {
     flipH: false,
     flipV: false,
     truchetGrid: 8,
-    truchetBalance: 50,
+    truchetBalance: 20,
     truchetRoundness: 100,
     masonryGrid: 8,
     masonrySizeVar: 60,
@@ -155,7 +157,7 @@ const config = {
     cityscapeRadius: 20,
     cityscapeIrregularity: 40,
     cityscapeMinSize: 3,
-    noiseScale: 50,
+    noiseScale: 52,
     noiseWarp: 50,
     noiseDetail: 3,
     noiseThreshold: 50,
@@ -193,6 +195,10 @@ const config = {
     peanoDepth: 2,
     peanoBalance: 50,
     peanoRadius: 50,
+    hexgridStyle: "starburst",
+    hexgridGrid: 4,
+    hexgridLineWidth: 4,
+    hexgridSpacing: 12,
 };
 
 function getStateHash() {
@@ -221,7 +227,8 @@ function getStateHash() {
         config.carpetDepth, config.carpetSpacing, config.carpetRadius,
         config.carpetInvert,
         config.hilbertDepth, config.hilbertBalance, config.hilbertRadius,
-        config.peanoDepth, config.peanoBalance, config.peanoRadius]);
+        config.peanoDepth, config.peanoBalance, config.peanoRadius,
+        config.hexgridStyle, config.hexgridGrid, config.hexgridLineWidth, config.hexgridSpacing]);
 }
 
 function markUnsaved() {
@@ -376,6 +383,13 @@ function syncAllControls() {
     document.getElementById("peano-balance-value").textContent = config.peanoBalance;
     document.getElementById("peano-radius").value = config.peanoRadius;
     document.getElementById("peano-radius-value").textContent = config.peanoRadius;
+    document.getElementById("hexgrid-style").value = config.hexgridStyle;
+    document.getElementById("hexgrid-grid").value = config.hexgridGrid;
+    document.getElementById("hexgrid-grid-value").textContent = config.hexgridGrid;
+    document.getElementById("hexgrid-linewidth").value = config.hexgridLineWidth;
+    document.getElementById("hexgrid-linewidth-value").textContent = config.hexgridLineWidth;
+    document.getElementById("hexgrid-spacing").value = config.hexgridSpacing;
+    document.getElementById("hexgrid-spacing-value").textContent = config.hexgridSpacing <= 1 ? 0 : config.hexgridSpacing;
     applyTransform();
 }
 
@@ -534,6 +548,10 @@ function saveDesign() {
         peanoDepth: config.peanoDepth,
         peanoBalance: config.peanoBalance,
         peanoRadius: config.peanoRadius,
+        hexgridStyle: config.hexgridStyle,
+        hexgridGrid: config.hexgridGrid,
+        hexgridLineWidth: config.hexgridLineWidth,
+        hexgridSpacing: config.hexgridSpacing,
     };
 
     const json = JSON.stringify(design, null, 2);
@@ -572,7 +590,7 @@ function loadDesign(file) {
             config.flipH = design.flipH ?? false;
             config.flipV = design.flipV ?? false;
             config.truchetGrid = design.truchetGrid ?? 8;
-            config.truchetBalance = design.truchetBalance ?? 50;
+            config.truchetBalance = design.truchetBalance ?? 20;
             config.truchetRoundness = design.truchetRoundness ?? 100;
             config.masonryGrid = design.masonryGrid ?? 8;
             config.masonrySizeVar = design.masonrySizeVar ?? 60;
@@ -588,7 +606,7 @@ function loadDesign(file) {
             config.cityscapeRadius = design.cityscapeRadius ?? 20;
             config.cityscapeIrregularity = design.cityscapeIrregularity ?? 40;
             config.cityscapeMinSize = design.cityscapeMinSize ?? 3;
-            config.noiseScale = design.noiseScale ?? 50;
+            config.noiseScale = design.noiseScale ?? 52;
             config.noiseWarp = design.noiseWarp ?? 50;
             config.noiseDetail = design.noiseDetail ?? 3;
             config.noiseThreshold = design.noiseThreshold ?? 50;
@@ -626,6 +644,10 @@ function loadDesign(file) {
             config.peanoDepth = design.peanoDepth ?? 2;
             config.peanoBalance = design.peanoBalance ?? 50;
             config.peanoRadius = design.peanoRadius ?? 50;
+            config.hexgridStyle = design.hexgridStyle ?? "starburst";
+            config.hexgridGrid = design.hexgridGrid ?? 4;
+            config.hexgridLineWidth = design.hexgridLineWidth ?? 4;
+            config.hexgridSpacing = design.hexgridSpacing ?? 12;
 
             skipNextHistoryRecord();
             clearHistory();
@@ -1335,6 +1357,39 @@ function setupControls() {
     peanoRadiusInput.addEventListener("input", () => {
         config.peanoRadius = parseInt(peanoRadiusInput.value);
         updateLabel("peano-radius", config.peanoRadius);
+        render();
+        markUnsaved();
+    });
+
+    // --- Hexagon Grid controls ---
+    const hexgridStyleInput = document.getElementById("hexgrid-style");
+    const hexgridGridInput = document.getElementById("hexgrid-grid");
+    const hexgridLinewidthInput = document.getElementById("hexgrid-linewidth");
+    const hexgridSpacingInput = document.getElementById("hexgrid-spacing");
+
+    hexgridStyleInput.addEventListener("change", () => {
+        config.hexgridStyle = hexgridStyleInput.value;
+        render();
+        markUnsaved();
+    });
+
+    hexgridGridInput.addEventListener("input", () => {
+        config.hexgridGrid = parseInt(hexgridGridInput.value);
+        updateLabel("hexgrid-grid", config.hexgridGrid);
+        render();
+        markUnsaved();
+    });
+
+    hexgridLinewidthInput.addEventListener("input", () => {
+        config.hexgridLineWidth = parseInt(hexgridLinewidthInput.value);
+        updateLabel("hexgrid-linewidth", config.hexgridLineWidth);
+        render();
+        markUnsaved();
+    });
+
+    hexgridSpacingInput.addEventListener("input", () => {
+        config.hexgridSpacing = parseInt(hexgridSpacingInput.value);
+        updateLabel("hexgrid-spacing", config.hexgridSpacing <= 1 ? 0 : config.hexgridSpacing);
         render();
         markUnsaved();
     });

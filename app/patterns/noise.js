@@ -374,7 +374,7 @@ export function generate(config) {
     const flipH = config.flipH || false;
     const flipV = config.flipV || false;
 
-    const scale = config.noiseScale ?? 50;
+    const scale = config.noiseScale ?? 52;
     const warp = config.noiseWarp ?? 50;
     const detail = config.noiseDetail ?? 3;
     const threshold = config.noiseThreshold ?? 50;

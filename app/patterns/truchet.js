@@ -130,7 +130,7 @@ export function generate(config) {
     const w = config.width;
     const h = config.height;
     const gridSize = config.truchetGrid || 8;
-    const balance = config.truchetBalance ?? 50;
+    const balance = config.truchetBalance ?? 20;
     const roundness = (config.truchetRoundness ?? 100) / 100;
     const rotation = config.rotation || 0;
     const flipH = config.flipH || false;
