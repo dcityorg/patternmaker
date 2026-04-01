@@ -49,6 +49,7 @@ export const HELP_SECTIONS = [
                 { key: 'Fractal Peano', value: 'Peano space-filling curve as a filled band. Similar to Hilbert but with a 3-fold grid.' },
                 { key: 'Shapes Aligned', value: 'Geometric shapes on a regular grid. 10 shape types. Row Offset creates brick/hex layouts.' },
                 { key: 'Shapes Scattered', value: 'Geometric shapes at Voronoi-distributed positions. Rotation adds per-shape random spin.' },
+                { key: 'Hexagon Grid', value: 'Flat-top hexagonal grid with internal geometric line patterns rendered as filled bands. 10 styles from simple radials (Tri, Starburst) to complex subdivisions (Diamond Cross, Lattice Star, Grid Lattice).' },
             ]},
         ],
     },
