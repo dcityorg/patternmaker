@@ -89,6 +89,7 @@ export const HELP_SECTIONS = [
             { type: 'keyvalue', items: [
                 { key: 'Save Design', value: 'Downloads a .json file with all parameters. Reload it later with Load Design.' },
                 { key: 'Load Design', value: 'Opens a previously saved .json design file and restores all settings.' },
+                { key: 'Copy SVG', value: 'Copies the SVG to your clipboard for pasting into other apps (e.g. VaseMaker).' },
                 { key: 'Export SVG', value: 'Downloads a clean SVG file (no stroke, cell/gap colors as specified). Ready for laser cutting or printing.' },
             ]},
             { type: 'tip', text: 'Save frequently! There is no auto-save. If you refresh the page, unsaved changes are lost.' },

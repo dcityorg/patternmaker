@@ -249,8 +249,9 @@ Scale (10-100), Warp (0-100), Detail (1-6), Threshold (10-90), Smoothness (0-100
 When the user says "save code", perform these steps in order:
 1. **Increment version**: Bump the patch version in `app/index.html` (the byline: "Seamless Tile Patterns — vX.X.X")
 2. **Update docs**: Update `CLAUDE.md` and other relevant doc files if the changes warrant it
-3. **Git commit**: Stage changed files and commit with a descriptive message
-4. **Push**: Run `git push` — Vercel auto-deploys from `main` via GitHub integration
+3. **Update help content**: If UI features were added or changed, update `app/help-content.js` accordingly
+4. **Git commit**: Stage changed files and commit with a descriptive message
+5. **Push**: Run `git push` — Vercel auto-deploys from `main` via GitHub integration
 
 ## Current Version
 v1.0.2
