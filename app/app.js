@@ -474,6 +474,52 @@ function exportSVG() {
     URL.revokeObjectURL(url);
 }
 
+// --- Copy SVG to Clipboard ---
+function copySVG() {
+    const w = config.width;
+    const h = config.height;
+    const tileGroup = document.getElementById("tile-cells");
+    const pathsHTML = tileGroup.innerHTML;
+
+    const svgString = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
+  <rect x="-1" y="-1" width="${w + 2}" height="${h + 2}" fill="${config.gapColor}"/>
+  ${pathsHTML}
+</svg>`;
+
+    const btn = document.getElementById("copy-svg");
+    const orig = btn.innerHTML;
+    const showFeedback = (text) => {
+        btn.innerHTML = text;
+        setTimeout(() => btn.innerHTML = orig, 1500);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(svgString).then(() => showFeedback("\u2713 Copied")).catch(() => {
+            // Fallback for insecure context (HTTP localhost)
+            const ta = document.createElement("textarea");
+            ta.value = svgString;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            showFeedback("\u2713 Copied");
+        });
+    } else {
+        const ta = document.createElement("textarea");
+        ta.value = svgString;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showFeedback("\u2713 Copied");
+    }
+}
+
 // --- Save / Load Design ---
 function saveDesign() {
     const design = {
@@ -950,6 +996,7 @@ function setupControls() {
     });
 
     exportBtn.addEventListener("click", exportSVG);
+    document.getElementById("copy-svg").addEventListener("click", copySVG);
 
     // --- Truchet controls ---
     const truchetGridInput = document.getElementById("truchet-grid");
