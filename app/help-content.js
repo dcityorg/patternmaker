@@ -50,6 +50,7 @@ export const HELP_SECTIONS = [
                 { key: 'Shapes Aligned', value: 'Geometric shapes on a regular grid. 10 shape types. Row Offset creates brick/hex layouts.' },
                 { key: 'Shapes Scattered', value: 'Geometric shapes at Voronoi-distributed positions. Rotation adds per-shape random spin.' },
                 { key: 'Hexagon Grid', value: 'Flat-top hexagonal grid with internal geometric line patterns rendered as filled bands. 10 styles from simple radials (Tri, Starburst) to complex subdivisions (Diamond Cross, Lattice Star, Grid Lattice).' },
+                { key: 'Pinwheel', value: 'Central node discs with curved swirling arms reaching the tile edges. Adjacent tiles\' arms meet at edges, forming continuous S-curves between centers. 4 arms (square grid) or 6 arms (hex grid). Tip Thickness adds printable body where arms meet the disc; Variation gives each band a different thickness while still tiling cleanly.' },
             ]},
         ],
     },

@@ -41,6 +41,7 @@ All app files live in `app/`:
 - `patterns/shapegrid.js` — Shapes Aligned pattern: geometric shapes on a regular grid with row offset
 - `patterns/vshapes.js` — Shapes Scattered pattern: geometric shapes at Voronoi-distributed points
 - `patterns/hexgrid.js` — Hexagon Grid pattern: flat-top hex grid with internal geometric line styles
+- `patterns/pinwheel.js` — Pinwheel pattern: central node disc with curved swirling arms reaching tile-edge midpoints; 4-arm (square grid) or 6-arm (hex grid) modes
 
 ### Pattern Module Interface
 Each pattern in `patterns/` exports:
@@ -180,6 +181,22 @@ The app renders all paths with `config.cellColor` fill, no stroke.
 - **Spacing**: Inset hex vertices for gap between hexagons, with overlap margin to prevent hairline gaps
 - **Ghost copies**: Hex centers generated beyond tile boundary for edge clipping
 
+### Pinwheel (pinwheel.js)
+- **Two modes**: 4-arm uses a square tile grid; 6-arm uses a flat-top hex grid (same layout math as `hexgrid.js`)
+- **Per tile/hex**: one node disc at the center, plus N arms (4 or 6) reaching the edge midpoints
+- **Arm geometry**: quadratic Bezier centerline from disc-side P0 to tile-edge midpoint, sampled and offset to a tapered band polygon
+  - Disc-side P0 rotated around the disc by `dir * swirlAng` (max 90°). Position interpolates from disc edge (tipFrac=0) to disc center (tipFrac=1)
+  - Exit tangent T3 rotated from perpendicular by `-dir * exitSwirlAng` (max ~72° off perpendicular) — gives gradual S-curve between centers instead of "sharp curl at disc + straight bridge"
+  - Q1 control point on the line through P3 along -T3, so exit tangent at P3 is exactly T3. Adjacent tiles compute the same T3 (via theta+π giving -T3) → bands match at the seam
+  - Quadratic chosen over cubic to avoid offset-polygon self-intersection from inflection points at high swirl
+- **Width taper**: smoothstep from `tipFrac * 0.4 * halfW` (disc end) to full halfW (tile-edge end). Combined with P0 inside disc, the band's disc-end cap is hidden so the arm merges cleanly into the disc with no notch
+- **Direction**: CW or CCW (sign on the swirl angle). All arms in a tile swirl the same way
+- **Variation (per-edge)**: per-edge thickness multiplier. Hash the edge midpoint coords (wrapped modulo canvas W, H so canvas-boundary edges hash identically) → both adjacent tiles compute the same thicknessMul for their shared edge → seams stay perfect. Variation slider scales the offset range (continuous, every step changes something visibly). Direction is NOT varied per-edge (that introduces visible "bat" tiling artifacts when adjacent tiles disagree on exit-tangent sign)
+- **Hex midpoint math**: `hexEdgeMids` computes actual edge midpoints from the hex vertices instead of using fixed 30°/90°/150° angles. Required for non-regular hexes (when canvas aspect ratio forces a ≠ b·2/√3) — the 4 diagonal mids are at (±3a/4, ±b/2), not at the angles a regular hex would have
+- **Tiling**: square mode is self-contained per tile. Hex mode uses ghost hex copies (col,row from -1 to numPairs*2+1 / numRows+1) clipped to the canvas via Sutherland-Hodgman
+- **Flip**: flipH/V apply a coordinate flip to all output polygons (and reverse winding when only one axis flips)
+- **Seeded PRNG**: mulberry32 + per-edge hash for deterministic variation
+
 ## Git History
 - `master` — Current working version with all fixes merged
 - `fix/cell-shape-pointy` — Merged into master. Kept for reference.
@@ -229,6 +246,9 @@ Scale (10-100), Size Range (0-100), Density (0-100), Size Bias (0-100), Spacing 
 ### Hexagon Grid Controls
 Style (dropdown: Starburst, Asanoha, Star, Nested, Tri, Diamond Cross, Flower Star, Triangle Sub, Lattice Star, Grid Lattice), Grid Size (1-12), Line Width (1-20), Spacing (1-50)
 
+### Pinwheel Controls
+Arms (dropdown: 4 (square) / 6 (hex)), Grid Size (2-20), Node Size (0-100), Arm Thickness (5-100), Tip Thickness (0-100), Swirl Amount (0-100), Direction (dropdown: Clockwise / Counter-clockwise), Variation (0-100)
+
 ### Rorschach Controls
 Scale (10-100), Warp (0-100), Detail (1-6), Threshold (10-90), Smoothness (0-100)
 
@@ -254,7 +274,7 @@ When the user says "save code", perform these steps in order:
 5. **Push**: Run `git push` — Vercel auto-deploys from `main` via GitHub integration
 
 ## Current Version
-v1.0.2
+v1.0.4
 
 ## Important Constraints
 - Voronoi: Spacing min=1 (not 0), Cell Shape min=1

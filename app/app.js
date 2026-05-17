@@ -11,10 +11,11 @@ import * as carpet from "./patterns/carpet.js";
 import * as hilbert from "./patterns/hilbert.js";
 import * as peano from "./patterns/peano.js";
 import * as hexgrid from "./patterns/hexgrid.js?v=11";
+import * as pinwheel from "./patterns/pinwheel.js?v=12";
 import { HELP_SECTIONS } from "./help-content.js";
 
 // --- Pattern registry ---
-const patterns = { voronoi, truchet, masonry, cityscape, noise, rd, circles, vshapes, shapegrid, carpet, hilbert, peano, hexgrid };
+const patterns = { voronoi, truchet, masonry, cityscape, noise, rd, circles, vshapes, shapegrid, carpet, hilbert, peano, hexgrid, pinwheel };
 let activePattern = voronoi;
 
 // --- State ---
@@ -120,6 +121,7 @@ const patternDefaults = {
     vshapes: { vshapesCells: 30, vshapesUniformity: 0, vshapesScale: 70, vshapesSpacing: 5, vshapesRadius: 20, vshapesRotation: 0 },
     shapegrid: { sgridCols: 8, sgridOffset: 50, sgridSpacing: 5, sgridRadius: 20, sgridRotation: 0 },
     hexgrid: { hexgridGrid: 4, hexgridLineWidth: 4, hexgridSpacing: 12, hexgridStyle: "starburst" },
+    pinwheel: { pinwheelArms: 4, pinwheelGrid: 5, pinwheelNode: 30, pinwheelThickness: 60, pinwheelSwirl: 80, pinwheelDirection: "cw", pinwheelVariation: 0, pinwheelTip: 0 },
     colors: { cellColor: "#000000", gapColor: "#ffffff" },
     dimensions: { width: 400, height: 400, rotation: 0, flipH: false, flipV: false },
 };
@@ -199,6 +201,14 @@ const config = {
     hexgridGrid: 4,
     hexgridLineWidth: 4,
     hexgridSpacing: 12,
+    pinwheelArms: 4,
+    pinwheelGrid: 5,
+    pinwheelNode: 30,
+    pinwheelThickness: 60,
+    pinwheelSwirl: 80,
+    pinwheelDirection: "cw",
+    pinwheelVariation: 0,
+    pinwheelTip: 0,
 };
 
 function getStateHash() {
@@ -228,7 +238,9 @@ function getStateHash() {
         config.carpetInvert,
         config.hilbertDepth, config.hilbertBalance, config.hilbertRadius,
         config.peanoDepth, config.peanoBalance, config.peanoRadius,
-        config.hexgridStyle, config.hexgridGrid, config.hexgridLineWidth, config.hexgridSpacing]);
+        config.hexgridStyle, config.hexgridGrid, config.hexgridLineWidth, config.hexgridSpacing,
+        config.pinwheelArms, config.pinwheelGrid, config.pinwheelNode, config.pinwheelThickness,
+        config.pinwheelSwirl, config.pinwheelDirection, config.pinwheelVariation, config.pinwheelTip]);
 }
 
 function markUnsaved() {
@@ -390,6 +402,20 @@ function syncAllControls() {
     document.getElementById("hexgrid-linewidth-value").textContent = config.hexgridLineWidth;
     document.getElementById("hexgrid-spacing").value = config.hexgridSpacing;
     document.getElementById("hexgrid-spacing-value").textContent = config.hexgridSpacing <= 1 ? 0 : config.hexgridSpacing;
+    document.getElementById("pinwheel-arms").value = String(config.pinwheelArms);
+    document.getElementById("pinwheel-grid").value = config.pinwheelGrid;
+    document.getElementById("pinwheel-grid-value").textContent = config.pinwheelGrid;
+    document.getElementById("pinwheel-node").value = config.pinwheelNode;
+    document.getElementById("pinwheel-node-value").textContent = config.pinwheelNode;
+    document.getElementById("pinwheel-thickness").value = config.pinwheelThickness;
+    document.getElementById("pinwheel-thickness-value").textContent = config.pinwheelThickness;
+    document.getElementById("pinwheel-swirl").value = config.pinwheelSwirl;
+    document.getElementById("pinwheel-swirl-value").textContent = config.pinwheelSwirl;
+    document.getElementById("pinwheel-direction").value = config.pinwheelDirection;
+    document.getElementById("pinwheel-variation").value = config.pinwheelVariation;
+    document.getElementById("pinwheel-variation-value").textContent = config.pinwheelVariation;
+    document.getElementById("pinwheel-tip").value = config.pinwheelTip;
+    document.getElementById("pinwheel-tip-value").textContent = config.pinwheelTip;
     applyTransform();
 }
 
@@ -598,6 +624,14 @@ function saveDesign() {
         hexgridGrid: config.hexgridGrid,
         hexgridLineWidth: config.hexgridLineWidth,
         hexgridSpacing: config.hexgridSpacing,
+        pinwheelArms: config.pinwheelArms,
+        pinwheelGrid: config.pinwheelGrid,
+        pinwheelNode: config.pinwheelNode,
+        pinwheelThickness: config.pinwheelThickness,
+        pinwheelSwirl: config.pinwheelSwirl,
+        pinwheelDirection: config.pinwheelDirection,
+        pinwheelVariation: config.pinwheelVariation,
+        pinwheelTip: config.pinwheelTip,
     };
 
     const json = JSON.stringify(design, null, 2);
@@ -694,6 +728,14 @@ function loadDesign(file) {
             config.hexgridGrid = design.hexgridGrid ?? 4;
             config.hexgridLineWidth = design.hexgridLineWidth ?? 4;
             config.hexgridSpacing = design.hexgridSpacing ?? 12;
+            config.pinwheelArms = design.pinwheelArms ?? 4;
+            config.pinwheelGrid = design.pinwheelGrid ?? 5;
+            config.pinwheelNode = design.pinwheelNode ?? 30;
+            config.pinwheelThickness = design.pinwheelThickness ?? 60;
+            config.pinwheelSwirl = design.pinwheelSwirl ?? 80;
+            config.pinwheelDirection = design.pinwheelDirection ?? "cw";
+            config.pinwheelVariation = design.pinwheelVariation ?? 0;
+            config.pinwheelTip = design.pinwheelTip ?? 0;
 
             skipNextHistoryRecord();
             clearHistory();
@@ -1437,6 +1479,70 @@ function setupControls() {
     hexgridSpacingInput.addEventListener("input", () => {
         config.hexgridSpacing = parseInt(hexgridSpacingInput.value);
         updateLabel("hexgrid-spacing", config.hexgridSpacing <= 1 ? 0 : config.hexgridSpacing);
+        render();
+        markUnsaved();
+    });
+
+    // --- Pinwheel controls ---
+    const pinwheelArmsInput = document.getElementById("pinwheel-arms");
+    const pinwheelGridInput = document.getElementById("pinwheel-grid");
+    const pinwheelNodeInput = document.getElementById("pinwheel-node");
+    const pinwheelThicknessInput = document.getElementById("pinwheel-thickness");
+    const pinwheelSwirlInput = document.getElementById("pinwheel-swirl");
+    const pinwheelDirectionInput = document.getElementById("pinwheel-direction");
+    const pinwheelVariationInput = document.getElementById("pinwheel-variation");
+
+    pinwheelArmsInput.addEventListener("change", () => {
+        config.pinwheelArms = parseInt(pinwheelArmsInput.value);
+        render();
+        markUnsaved();
+    });
+
+    pinwheelGridInput.addEventListener("input", () => {
+        config.pinwheelGrid = parseInt(pinwheelGridInput.value);
+        updateLabel("pinwheel-grid", config.pinwheelGrid);
+        render();
+        markUnsaved();
+    });
+
+    pinwheelNodeInput.addEventListener("input", () => {
+        config.pinwheelNode = parseInt(pinwheelNodeInput.value);
+        updateLabel("pinwheel-node", config.pinwheelNode);
+        render();
+        markUnsaved();
+    });
+
+    pinwheelThicknessInput.addEventListener("input", () => {
+        config.pinwheelThickness = parseInt(pinwheelThicknessInput.value);
+        updateLabel("pinwheel-thickness", config.pinwheelThickness);
+        render();
+        markUnsaved();
+    });
+
+    pinwheelSwirlInput.addEventListener("input", () => {
+        config.pinwheelSwirl = parseInt(pinwheelSwirlInput.value);
+        updateLabel("pinwheel-swirl", config.pinwheelSwirl);
+        render();
+        markUnsaved();
+    });
+
+    pinwheelDirectionInput.addEventListener("change", () => {
+        config.pinwheelDirection = pinwheelDirectionInput.value;
+        render();
+        markUnsaved();
+    });
+
+    pinwheelVariationInput.addEventListener("input", () => {
+        config.pinwheelVariation = parseInt(pinwheelVariationInput.value);
+        updateLabel("pinwheel-variation", config.pinwheelVariation);
+        render();
+        markUnsaved();
+    });
+
+    const pinwheelTipInput = document.getElementById("pinwheel-tip");
+    pinwheelTipInput.addEventListener("input", () => {
+        config.pinwheelTip = parseInt(pinwheelTipInput.value);
+        updateLabel("pinwheel-tip", config.pinwheelTip);
         render();
         markUnsaved();
     });

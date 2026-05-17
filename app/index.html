@@ -20,7 +20,7 @@
                         <button id="help-btn" class="header-icon-btn help-toggle" title="Toggle help panel">?</button>
                     </div>
                 </div>
-                <div class="byline">Seamless Tile Patterns — v1.0.2</div>
+                <div class="byline">Seamless Tile Patterns — v1.0.4</div>
                 <div class="filename-row">
                     <span class="unsaved-dot" id="unsaved-dot"></span>
                     <input type="text" id="filename-input" class="filename-input" value="my-pattern" spellcheck="false">
@@ -49,6 +49,7 @@
                     <option value="peano">Fractal Peano</option>
                     <option value="hexgrid">Hexagon Grid</option>
                     <option value="masonry">Masonry</option>
+                    <option value="pinwheel">Pinwheel</option>
                     <option value="rd">Reaction-Diffusion</option>
                     <option value="noise">Rorschach</option>
                     <option value="shapegrid">Shapes Aligned</option>
@@ -134,6 +135,55 @@
                         <label>Irregularity</label>
                         <input type="range" id="masonry-irregularity" min="0" max="100" value="40">
                         <span class="value" id="masonry-irregularity-value">40</span>
+                    </div>
+                </div>
+
+                <!-- Pinwheel -->
+                <div id="pinwheel-controls" class="pattern-controls" style="display:none">
+                    <div class="select-row">
+                        <label>Arms</label>
+                        <select id="pinwheel-arms">
+                            <option value="4" selected>4 (square)</option>
+                            <option value="6">6 (hex)</option>
+                        </select>
+                    </div>
+                    <div class="reset-row"><a href="#" class="reset-link" data-pattern="pinwheel">Reset</a></div>
+                    <div class="slider-row">
+                        <label>Grid Size</label>
+                        <input type="range" id="pinwheel-grid" min="2" max="20" value="5">
+                        <span class="value" id="pinwheel-grid-value">5</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Node Size</label>
+                        <input type="range" id="pinwheel-node" min="0" max="100" value="30">
+                        <span class="value" id="pinwheel-node-value">30</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Arm Thickness</label>
+                        <input type="range" id="pinwheel-thickness" min="5" max="100" value="60">
+                        <span class="value" id="pinwheel-thickness-value">60</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Tip Thickness</label>
+                        <input type="range" id="pinwheel-tip" min="0" max="100" value="0">
+                        <span class="value" id="pinwheel-tip-value">0</span>
+                    </div>
+                    <div class="slider-row">
+                        <label>Swirl Amount</label>
+                        <input type="range" id="pinwheel-swirl" min="0" max="100" value="80">
+                        <span class="value" id="pinwheel-swirl-value">80</span>
+                    </div>
+                    <div class="select-row">
+                        <label>Direction</label>
+                        <select id="pinwheel-direction">
+                            <option value="cw" selected>Clockwise</option>
+                            <option value="ccw">Counter-clockwise</option>
+                        </select>
+                    </div>
+                    <div class="slider-row">
+                        <label>Variation</label>
+                        <input type="range" id="pinwheel-variation" min="0" max="100" value="0">
+                        <span class="value" id="pinwheel-variation-value">0</span>
                     </div>
                 </div>
 
@@ -567,7 +617,7 @@
     </div>
 
     <input type="file" id="file-loader" accept=".json" style="display:none">
-    <script type="module" src="app.js?v=17"></script>
+    <script type="module" src="app.js?v=19"></script>
     <script defer src="/_vercel/insights/script.js"></script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
