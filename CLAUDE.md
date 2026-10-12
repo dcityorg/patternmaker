@@ -13,6 +13,7 @@ Patterns are applied to physical objects (vases). Key constraints:
 - Pure HTML/CSS/JS, no build step
 - d3-delaunay via ESM CDN import (used by Voronoi, Cityscape, and Shapes Scattered patterns)
 - Deployed to Vercel (CLI: `vercel --prod`)
+- Analytics: GoatCounter (shared dcity.org site) per `../DCity/ANALYTICS.md` — tag in `index.html` head, `dcCountExport("patternmaker-export-svg")` on Export SVG only (not Copy SVG). Brave blocks it. Vercel Analytics also present.
 - Local dev: `cd app && python3 -m http.server 8080`
 
 ## Project Structure
