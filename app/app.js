@@ -498,6 +498,14 @@ function exportSVG() {
     a.download = getFilename() + ".svg";
     a.click();
     URL.revokeObjectURL(url);
+    dcCountExport("patternmaker-export-svg");
+}
+
+// --- Analytics: one event per Export SVG click (DCity/ANALYTICS.md §2) ---
+function dcCountExport(name) {
+    if (document.cookie.indexOf("dcity_nocount=1") !== -1) return;
+    if (window.goatcounter && window.goatcounter.count)
+        window.goatcounter.count({ path: name, title: name, event: true });
 }
 
 // --- Copy SVG to Clipboard ---

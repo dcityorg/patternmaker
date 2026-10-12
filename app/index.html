@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pattern Maker — Seamless Tile Patterns</title>
     <link rel="stylesheet" href="style.css?v=11">
+    <!-- dcity.org analytics: §1 of DCity/ANALYTICS.md, the same tag on all four
+         sites (change it there). The export event is dcCountExport() in app.js. -->
+    <script>
+      // Opt-out: a browser that has visited dcity.org/nocount is never counted.
+      var dcNoCount = document.cookie.indexOf('dcity_nocount=1') !== -1;
+      window.goatcounter = {
+        no_onload: dcNoCount,
+        // One GoatCounter site serves four hostnames, and every app's home page is "/".
+        // Prefix the host so boxmaker "/" and vasemaker "/" do not merge.
+        path: function (p) { return location.host + p; }
+      };
+    </script>
+    <script data-goatcounter="https://dcity.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
     <div class="app">
@@ -20,7 +34,7 @@
                         <button id="help-btn" class="header-icon-btn help-toggle" title="Toggle help panel">?</button>
                     </div>
                 </div>
-                <div class="byline">Seamless Tile Patterns — v1.0.4</div>
+                <div class="byline">Seamless Tile Patterns — v1.0.5</div>
                 <div class="filename-row">
                     <span class="unsaved-dot" id="unsaved-dot"></span>
                     <input type="text" id="filename-input" class="filename-input" value="my-pattern" spellcheck="false">
@@ -617,7 +631,7 @@
     </div>
 
     <input type="file" id="file-loader" accept=".json" style="display:none">
-    <script type="module" src="app.js?v=19"></script>
+    <script type="module" src="app.js?v=20"></script>
     <script defer src="/_vercel/insights/script.js"></script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>

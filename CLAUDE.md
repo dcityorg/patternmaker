@@ -274,7 +274,7 @@ When the user says "save code", perform these steps in order:
 5. **Push**: Run `git push` — Vercel auto-deploys from `main` via GitHub integration
 
 ## Current Version
-v1.0.4
+v1.0.5
 
 ## Important Constraints
 - Voronoi: Spacing min=1 (not 0), Cell Shape min=1
