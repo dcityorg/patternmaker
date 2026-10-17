@@ -2,6 +2,27 @@
 
 Multi-pattern seamless tile generator. Static web app (HTML/CSS/JS), deployed to Vercel.
 
+## Start of every session (added 2026-10-16 by the architect)
+
+This app is part of Gary's multi-session system (root `../CLAUDE.md`, *App projects*). Before
+touching anything:
+
+```bash
+~/Dropbox/Documents/Design/Claude/tools/drift-check.sh
+ls ~/Dropbox/Documents/Design/Claude/HANDOFF-*-to-patternmaker*.md 2>/dev/null
+```
+
+- Anything `...-to-patternmaker...` is written for you. Read it, act on it, then delete it and commit
+  **in the root repo** naming it ("consumes HANDOFF-..."). The mailbox is not in this repo.
+- **Open items** go as `- [ ]` in `TODO.md` or this file. Only those two feed the root
+  `TODO-ALL.md`; checkboxes in design docs are treated as feature backlog and not rolled up.
+- **`README.md` is shared with the hermes session** (Gary, 2026-10-16). You keep it true to the
+  app's features; Hermes may edit its help and support wording. Hermes owns
+  `.github/ISSUE_TEMPLATE/`, the pinned discussions and the repo settings. FAQ answers go into
+  the in-app help, here, once Gary has decided them.
+- **"Wrap up"** means the root `CLAUDE.md` procedure: commit, mailbox, handoffs, checkboxes,
+  and the state of play in your last commit message.
+
 ## Use Case
 Patterns are applied to physical objects (vases). Key constraints:
 - Only 2 colors (cell + gap, typically black/white)
